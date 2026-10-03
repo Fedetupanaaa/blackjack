@@ -20,6 +20,7 @@
       --red: #e36b6b;
     }
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
     body {
       min-height: 100vh; margin: 0; padding: 24px;
       display: grid; place-items: center;
@@ -53,9 +54,9 @@
       width: 72px; height: 103px; flex: 0 1 72px; position: relative; margin: 0 5px;
       display: grid; place-items: center; border: 1px solid #e6ddca; border-radius: 10px;
       color: #182a25; background: #fffaf0; box-shadow: 0 5px 9px #002a1d88;
-      animation: deal .22s ease-out both;
+      animation: deal .48s cubic-bezier(.16,.78,.28,1) both;
     }
-    @keyframes deal { from { opacity: 0; transform: translateY(-12px) scale(.94); } to { opacity: 1; transform: none; } }
+    @keyframes deal { 0% { opacity: 0; transform: perspective(600px) translateY(-38px) rotateY(95deg) rotateZ(-7deg) scale(.82); } 65% { opacity: 1; transform: perspective(600px) translateY(4px) rotateY(-8deg); } 100% { transform: perspective(600px) translateY(0) rotateY(0); } }
     .card.red { color: #d95555; }
     .card .corner { position: absolute; display: flex; flex-direction: column; align-items: center; font-weight: 800; line-height: 1.05; }
     .card .top { top: 7px; left: 8px; }
@@ -80,6 +81,61 @@
     .btn.primary:hover:not(:disabled) { background: #ffda8d; }
     .btn:disabled { color: #60766c; border-color: #26382f; background: #172720; cursor: not-allowed; }
     .btn.bet-chip { min-height: 36px; padding: 0 11px; font-size: 11px; }
+    .account-screen { width: min(940px, 100%); padding: 30px; border: 1px solid var(--edge); border-radius: 16px; background: var(--panel); box-shadow: 0 24px 80px #0008; }
+    .account-head { margin-bottom: 22px; text-align: center; }
+    .account-head h1 { margin: 0; color: var(--gold); font-size: 27px; }
+    .account-head p, .local-note { color: var(--muted); font-size: 12px; }
+    .account-layout { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(0, 1.2fr); gap: 24px; }
+    .account-form { display: grid; align-content: start; gap: 12px; }
+    .account-form label { display: grid; gap: 6px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+    .account-form input { min-height: 42px; padding: 0 12px; border: 1px solid #416153; border-radius: 8px; color: var(--cream); background: #071713; font: inherit; }
+    .account-form .btn { width: 100%; }
+    .auth-status { min-height: 18px; margin: 0; color: var(--gold); font-size: 12px; }
+    .leaderboards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .leaderboard { min-width: 0; padding: 14px; border-left: 2px solid var(--green); background: #0b1d18; }
+    .leaderboard.losses { border-left-color: var(--red); }
+    .leaderboard h2 { margin: 0 0 12px; font-size: 12px; }
+    .leaderboard ol { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .leaderboard li { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 11px; }
+    .leaderboard li strong { overflow: hidden; color: var(--cream); text-overflow: ellipsis; white-space: nowrap; }
+    .leaderboard li span { flex: 0 0 auto; }
+    .local-note { margin: 20px 0 0; font-size: 10px; text-align: center; }
+    .game-picker { width: min(600px, 100%); padding: 34px; border: 1px solid var(--edge); border-radius: 18px; background: var(--panel); box-shadow: 0 24px 80px #0008; text-align: center; }
+    .game-picker h1 { margin: 0; color: var(--gold); font-size: 26px; }
+    .game-picker p { margin: 8px 0 24px; color: var(--muted); }
+    .game-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .game-option { min-height: 110px; border: 1px solid #416153; border-radius: 12px; color: var(--cream); background: #1b3930; cursor: pointer; }
+    .game-option strong { display: block; color: var(--gold); font-size: 18px; }
+    .game-option span { display: block; margin-top: 7px; color: var(--muted); font-size: 11px; }
+    .mode-switch { margin-left: auto; }
+    .roulette-board { display: grid; justify-items: center; align-content: center; gap: 14px; min-height: 100%; }
+    .roulette-wheel { position: relative; width: 180px; aspect-ratio: 1; display: grid; place-items: center; border: 8px solid #d2b56f; border-radius: 50%; background: #172720; box-shadow: 0 0 0 5px #493d25, 0 12px 30px #001a12aa; }
+    .roulette-wheel.spinning { animation: roulette-spin 2.8s cubic-bezier(.12,.72,.18,1) both; }
+    @keyframes roulette-spin { from { transform: rotate(0); } to { transform: rotate(1800deg); } }
+    .roulette-pocket-ring { position: absolute; z-index: 1; inset: 0; border-radius: 50%; pointer-events: none; }
+    .roulette-pocket { position: absolute; width: 16px; color: #fff; font-size: 8px; font-weight: 900; line-height: 1; text-align: center; text-shadow: 0 1px 2px #000; transform: translate(-50%, -50%); }
+    .roulette-pocket.red { color: #ffaaa7; }
+    .roulette-pocket.green { color: #98f2bf; }
+    .roulette-ball-track { position: absolute; z-index: 3; inset: 0; border-radius: 50%; pointer-events: none; }
+    .roulette-ball-track.spinning { animation: ball-orbit 2.8s cubic-bezier(.12,.72,.18,1) both; }
+    @keyframes ball-orbit {
+      0% { transform: rotate(0deg); }
+      72% { transform: rotate(calc(var(--land-angle) - 28deg)); }
+      91% { transform: rotate(calc(var(--land-angle) + 4deg)); }
+      100% { transform: rotate(var(--land-angle)); }
+    }
+    .roulette-ball { position: absolute; top: 5%; left: 50%; width: 12px; aspect-ratio: 1; border: 1px solid #c7c9bd; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #fff 0 24%, #e7e8dc 52%, #9c9d94 100%); box-shadow: 0 2px 5px #000c; transform: translateX(-50%); }
+    .roulette-ball-track.spinning .roulette-ball { animation: ball-drop .65s 2.15s cubic-bezier(.2,.8,.25,1) both; }
+    @keyframes ball-drop { 0% { translate: 0 0; } 55% { translate: 0 12px; } 75% { translate: 0 7px; } 100% { translate: 0 10px; } }
+    .roulette-result { position: relative; z-index: 2; width: 72px; height: 72px; display: grid; place-items: center; border: 3px solid #f3e5c4; border-radius: 50%; color: white; background: #16734e; font-size: 32px; font-weight: 900; box-shadow: 0 3px 12px #0009; }
+    .roulette-result.red { background: #b62d36; }
+    .roulette-result.black { background: #172720; }
+    .roulette-result.green { background: #16734e; }
+    .roulette-caption { color: #e2eadf; font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+    .roulette-bets { display: flex; align-items: end; gap: 8px; }
+    .roulette-bets label { display: grid; gap: 5px; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .08em; }
+    .roulette-bets select, .roulette-bets input { min-height: 38px; padding: 0 10px; border: 1px solid #416153; border-radius: 8px; color: var(--cream); background: #10251f; font: inherit; }
+    .roulette-bets input { width: 76px; }
     footer { display: flex; justify-content: space-between; gap: 10px; margin: 16px 4px 0; color: #77968a; font-size: 9px; font-weight: 700; letter-spacing: .06em; }
     @media (max-width: 760px) {
       body { padding: 14px; }
@@ -95,23 +151,71 @@
       .betting-label { text-align: center; }
       .actions { justify-content: center; }
       .btn { flex: 1 1 auto; padding: 0 11px; }
+      .game-picker { padding: 24px 16px; }
+      .account-screen { padding: 22px 16px; }
+      .account-layout { grid-template-columns: 1fr; }
+      .roulette-bets { justify-content: center; flex-wrap: wrap; }
+      .roulette-wheel { width: 150px; }
       footer { font-size: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
     }
     @media (max-width: 390px) { .brand h1 { font-size: 14px; } .stat { min-width: 0; padding: 9px; } .table-mark { font-size: 8px; } }
   </style>
 </head>
 <body>
-  <main class="app">
+  <section class="account-screen" id="account-screen" aria-labelledby="account-title">
+    <header class="account-head">
+      <h1 id="account-title">BLACKJACK 21</h1>
+      <p>Crea una cuenta o inicia sesión para guardar tus resultados</p>
+    </header>
+    <div class="account-layout">
+      <form class="account-form" id="account-form">
+        <label for="account-name">NOMBRE DE CUENTA
+          <input id="account-name" name="username" autocomplete="username" required>
+        </label>
+        <label for="account-password">CONTRASEÑA
+          <input id="account-password" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="btn primary" id="register-account" type="button">CREAR CUENTA</button>
+        <button class="btn" id="login-account" type="submit">INICIAR SESIÓN</button>
+        <p class="auth-status" id="auth-status" role="status" aria-live="polite"></p>
+      </form>
+      <div class="leaderboards" aria-label="Clasificaciones">
+        <section class="leaderboard">
+          <h2>TOP DINERO GANADO</h2>
+          <ol id="leaderboard-won"></ol>
+        </section>
+        <section class="leaderboard losses">
+          <h2>TOP DINERO PERDIDO</h2>
+          <ol id="leaderboard-lost"></ol>
+        </section>
+      </div>
+    </div>
+    <p class="local-note">Las cuentas y clasificaciones se guardan solo en este navegador; no se sincronizan entre dispositivos.</p>
+  </section>
+  <section class="game-picker" id="game-picker" aria-labelledby="picker-title" hidden>
+    <h1 id="picker-title">BLACKJACK 21</h1>
+    <p>Cuenta: <strong id="active-account-name"></strong> · elige tu mesa</p>
+    <div class="game-options">
+      <button class="game-option" data-mode="blackjack"><strong>♠ Blackjack</strong><span>Cartas · pago 3:2</span></button>
+      <button class="game-option" data-mode="roulette"><strong>◉ Ruleta</strong><span>Ruleta europea · 0–36</span></button>
+    </div>
+  </section>
+  <main class="app" id="app" hidden>
     <header class="topbar">
       <span class="brand-icon" aria-hidden="true">♠</span>
-      <div class="brand"><h1>BLACKJACK</h1><small>21&nbsp; / &nbsp;MESA PRIVADA</small></div>
+      <div class="brand"><h1 id="game-title">BLACKJACK</h1><small id="game-subtitle">21&nbsp; / &nbsp;MESA PRIVADA</small></div>
+      <button class="btn mode-switch" id="change-game" aria-label="Cambiar juego" title="Cambiar juego">JUEGOS</button>
+      <button class="btn" id="change-account">CUENTA</button>
       <div class="stats" aria-label="Marcador">
         <div class="stat"><span>SALDO</span><strong id="bankroll">$1,000</strong></div>
         <div class="stat bet"><span>APUESTA</span><strong id="bet">$100</strong></div>
       </div>
     </header>
 
-    <section class="table" aria-label="Mesa de blackjack">
+    <section class="table" id="blackjack-table" aria-label="Mesa de blackjack">
       <div class="seat dealer-seat">
         <h2 class="seat-title">DEALER</h2>
         <div class="hand" id="dealer-hand" aria-label="Mano del dealer"></div>
@@ -122,6 +226,16 @@
         <h2 class="seat-title">TU MANO</h2>
         <div class="hand" id="player-hand" aria-label="Tu mano"></div>
         <div class="score" id="player-score" hidden></div>
+      </div>
+    </section>
+    <section class="table" id="roulette-table" aria-label="Mesa de ruleta" hidden>
+      <div class="roulette-board">
+        <div class="roulette-wheel" id="roulette-wheel">
+          <div class="roulette-pocket-ring" id="roulette-pocket-ring" aria-hidden="true"></div>
+          <div class="roulette-ball-track" id="roulette-ball-track" aria-hidden="true"><span class="roulette-ball"></span></div>
+          <div class="roulette-result green" id="roulette-result">?</div>
+        </div>
+        <div class="roulette-caption" id="roulette-caption">HAZ TU APUESTA</div>
       </div>
     </section>
     <div class="status" id="status" role="status" aria-live="polite">¡Listo para jugar!</div>
@@ -135,14 +249,31 @@
         <button class="btn bet-chip" data-bet="50">+$50</button>
         <button class="btn bet-chip" data-bet="100">+$100</button>
       </div>
-      <div class="actions">
+      <div class="actions" id="blackjack-actions">
         <button class="btn primary" id="deal">REPARTIR <small>ENTER</small></button>
         <button class="btn" id="hit" disabled>PEDIR <small>H</small></button>
         <button class="btn" id="stand" disabled>PLANTARSE <small>S</small></button>
         <button class="btn" id="double" disabled>DOBLAR</button>
       </div>
+      <div class="actions" id="roulette-actions" hidden>
+        <div class="roulette-bets">
+          <label>TIPO DE APUESTA
+            <select id="roulette-type">
+              <option value="red">Rojo</option><option value="black">Negro</option>
+              <option value="even">Par</option><option value="odd">Impar</option>
+              <option value="low">1–18</option><option value="high">19–36</option>
+              <option value="dozen1">Primera docena</option><option value="dozen2">Segunda docena</option><option value="dozen3">Tercera docena</option>
+              <option value="number">Número exacto</option>
+            </select>
+          </label>
+          <label id="number-label" hidden>NÚMERO
+            <input id="roulette-number" type="number" min="0" max="36" value="17" inputmode="numeric">
+          </label>
+        </div>
+        <button class="btn primary" id="spin">GIRAR</button>
+      </div>
     </section>
-    <footer><span id="round">RONDA&nbsp; 00</span><span>H&nbsp; PEDIR &nbsp;&nbsp; S&nbsp; PLANTARSE &nbsp;&nbsp; ENTER&nbsp; REPARTIR</span></footer>
+    <footer><span id="round">RONDA&nbsp; 00</span><span id="shortcut-hints">H&nbsp; PEDIR &nbsp;&nbsp; S&nbsp; PLANTARSE &nbsp;&nbsp; ENTER&nbsp; REPARTIR</span></footer>
   </main>
 
   <script>
@@ -150,9 +281,119 @@
       "use strict";
       const suits = ["♠", "♥", "♦", "♣"];
       const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
-      const state = { bankroll: 1000, bet: 100, player: [], dealer: [], deck: [], active: false, hidden: false, round: 0, resultKind: "neutral" };
+      const redNumbers = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
+      const rouletteOrder = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+      const storageKey = "blackjack21.accounts.v1";
+      const state = { bankroll: 1000, bet: 100, roundStake: 0, player: [], dealer: [], deck: [], active: false, isSpinning: false, hidden: false, round: 0, resultKind: "neutral", mode: "blackjack" };
+      let accounts = loadAccounts();
+      let activeAccount = null;
       const $ = (id) => document.getElementById(id);
       const money = (amount) => `$${amount.toLocaleString("en-US")}`;
+
+      function loadAccounts() {
+        try {
+          const stored = JSON.parse(localStorage.getItem(storageKey) || "[]");
+          return Array.isArray(stored) ? stored.filter((account) => account && typeof account.name === "string" && typeof account.won === "number" && typeof account.lost === "number") : [];
+        } catch { return []; }
+      }
+      function saveAccounts() {
+        localStorage.setItem(storageKey, JSON.stringify(accounts));
+        renderLeaderboards();
+      }
+      function renderLeaderboards() {
+        for (const [id, field, emptyText] of [["leaderboard-won", "won", "Aún no hay ganancias"], ["leaderboard-lost", "lost", "Aún no hay pérdidas"]]) {
+          const list = $(id);
+          list.replaceChildren();
+          const ranked = [...accounts].sort((first, second) => second[field] - first[field] || first.name.localeCompare(second.name)).slice(0, 5);
+          if (!ranked.length || ranked[0][field] === 0) {
+            const item = document.createElement("li");
+            item.textContent = emptyText;
+            list.append(item);
+            continue;
+          }
+          ranked.forEach((account, index) => {
+            if (!account[field]) return;
+            const item = document.createElement("li");
+            const name = document.createElement("strong");
+            const amount = document.createElement("span");
+            name.textContent = `${index + 1}. ${account.name}`;
+            amount.textContent = money(account[field]);
+            item.append(name, amount);
+            list.append(item);
+          });
+        }
+      }
+      function derivePassword(password, salt) {
+        const encoded = new TextEncoder();
+        return crypto.subtle.importKey("raw", encoded.encode(password), "PBKDF2", false, ["deriveBits"])
+          .then((key) => crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256" }, key, 256))
+          .then((bits) => Array.from(new Uint8Array(bits), (byte) => byte.toString(16).padStart(2, "0")).join(""));
+      }
+      function setAuthMessage(message) { $("auth-status").textContent = message; }
+      function renderRoulettePockets() {
+        const ring = $("roulette-pocket-ring");
+        const wheel = $("roulette-wheel");
+        const sector = 360 / rouletteOrder.length;
+        const stops = rouletteOrder.map((number, index) => {
+          const color = number === 0 ? "#16734e" : redNumbers.has(number) ? "#b62d36" : "#172720";
+          return `${color} ${index * sector}deg ${(index + 1) * sector}deg`;
+        });
+        wheel.style.background = `conic-gradient(${stops.join(",")})`;
+        rouletteOrder.forEach((number, index) => {
+          const angle = (index * sector - 90) * Math.PI / 180;
+          const pocket = document.createElement("span");
+          pocket.className = `roulette-pocket ${number === 0 ? "green" : redNumbers.has(number) ? "red" : "black"}`;
+          pocket.textContent = number;
+          pocket.style.left = `${50 + Math.cos(angle) * 36}%`;
+          pocket.style.top = `${50 + Math.sin(angle) * 36}%`;
+          ring.append(pocket);
+        });
+      }
+      function enterGameSelection(account) {
+        activeAccount = account;
+        state.bankroll = 1000;
+        state.bet = 100;
+        state.roundStake = 0;
+        state.round = 0;
+        state.player = [];
+        state.dealer = [];
+        state.active = false;
+        state.isSpinning = false;
+        state.hidden = false;
+        newShoe();
+        $("active-account-name").textContent = account.name;
+        $("account-screen").hidden = true;
+        $("app").hidden = true;
+        $("game-picker").hidden = false;
+      }
+      async function registerAccount() {
+        const name = $("account-name").value.trim();
+        const password = $("account-password").value;
+        if (name.length < 1 || password.length < 1) { setAuthMessage("Usa un nombre de 1 carácter y una contraseña de 1 como mínimo."); return; }
+        if (accounts.some((account) => account.name.toLocaleLowerCase() === name.toLocaleLowerCase())) { setAuthMessage("Ese nombre ya existe. Inicia sesión con esa cuenta."); return; }
+        try {
+          const salt = crypto.getRandomValues(new Uint8Array(16));
+          const passwordHash = await derivePassword(password, salt);
+          const account = { name, salt: Array.from(salt), passwordHash, won: 0, lost: 0 };
+          accounts.push(account);
+          saveAccounts();
+          $("account-password").value = "";
+          enterGameSelection(account);
+        } catch { setAuthMessage("No se pudo guardar la cuenta en este navegador."); }
+      }
+      async function loginAccount(event) {
+        event.preventDefault();
+        const name = $("account-name").value.trim();
+        const password = $("account-password").value;
+        const account = accounts.find((entry) => entry.name.toLocaleLowerCase() === name.toLocaleLowerCase());
+        if (!account) { setAuthMessage("No encontramos esa cuenta. Puedes crearla."); return; }
+        try {
+          const passwordHash = await derivePassword(password, new Uint8Array(account.salt));
+          if (passwordHash !== account.passwordHash) { setAuthMessage("Contraseña incorrecta."); return; }
+          $("account-password").value = "";
+          enterGameSelection(account);
+        } catch { setAuthMessage("No se pudo validar la cuenta en este navegador."); }
+      }
 
       function newShoe() {
         state.deck = [];
@@ -173,8 +414,84 @@
         return total;
       }
       function blackjack(cards) { return cards.length === 2 && score(cards) === 21; }
+      function chooseMode(mode) {
+        if (state.active || state.isSpinning || !activeAccount) return;
+        state.mode = mode;
+        $("game-picker").hidden = true;
+        $("app").hidden = false;
+        const roulette = mode === "roulette";
+        $("blackjack-table").hidden = roulette;
+        $("roulette-table").hidden = !roulette;
+        $("blackjack-actions").hidden = roulette;
+        $("roulette-actions").hidden = !roulette;
+        $("game-title").textContent = roulette ? "RULETA" : "BLACKJACK";
+        $("game-subtitle").textContent = roulette ? "EUROPEA / 0–36" : "21 / MESA PRIVADA";
+        state.message = roulette ? "Elige apuesta y gira la ruleta." : "¡Listo para jugar!";
+        state.resultKind = "neutral";
+        render();
+      }
+      function spinRoulette() {
+        if (state.isSpinning || state.bankroll < state.bet) return;
+        const type = $("roulette-type").value;
+        const selectedNumber = Number($("roulette-number").value);
+        if (type === "number" && (!Number.isInteger(selectedNumber) || selectedNumber < 0 || selectedNumber > 36)) {
+          $("status").textContent = "Elige un número entre 0 y 36.";
+          $("status").className = "status loss";
+          return;
+        }
+        const result = Math.floor(Math.random() * 37);
+        const color = result === 0 ? "green" : redNumbers.has(result) ? "red" : "black";
+        const dozen = result === 0 ? 0 : Math.ceil(result / 12);
+        const wins = type === "red" ? color === "red"
+          : type === "black" ? color === "black"
+          : type === "even" ? result !== 0 && result % 2 === 0
+          : type === "odd" ? result % 2 === 1
+          : type === "low" ? result >= 1 && result <= 18
+          : type === "high" ? result >= 19
+          : type === "dozen1" ? dozen === 1
+          : type === "dozen2" ? dozen === 2
+          : type === "dozen3" ? dozen === 3
+          : result === selectedNumber;
+        const multiplier = type.startsWith("dozen") ? 2 : type === "number" ? 35 : 1;
+        state.bankroll -= state.bet;
+        state.round++;
+        state.isSpinning = true;
+        const wheel = $("roulette-wheel");
+        const ballTrack = $("roulette-ball-track");
+        const pocketIndex = rouletteOrder.indexOf(result);
+        const landingAngle = 360 * 7 + pocketIndex * 360 / rouletteOrder.length;
+        ballTrack.style.setProperty("--land-angle", `${landingAngle}deg`);
+        wheel.classList.remove("spinning");
+        ballTrack.classList.remove("spinning");
+        void wheel.offsetWidth;
+        wheel.classList.add("spinning");
+        ballTrack.classList.add("spinning");
+        render();
+        window.setTimeout(() => {
+          if (wins) {
+            state.bankroll += state.bet * (multiplier + 1);
+            recordResult(state.bet * multiplier, 0);
+          } else recordResult(0, state.bet);
+          const resultEl = $("roulette-result");
+          resultEl.textContent = result;
+          resultEl.className = `roulette-result ${color}`;
+          $("roulette-caption").textContent = `${color === "red" ? "ROJO" : color === "black" ? "NEGRO" : "VERDE"} · ${result}`;
+          state.message = wins ? `¡Ganaste ${money(state.bet * multiplier)}!` : `Salió ${result}. Esta vez no hubo premio.`;
+          state.resultKind = wins ? "win" : "loss";
+          state.isSpinning = false;
+          render();
+        }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 100 : 2800);
+      }
+      function recordResult(won, lost) {
+        if (!activeAccount) return;
+        activeAccount.won += won;
+        activeAccount.lost += lost;
+        saveAccounts();
+      }
       function finish(message, kind, payout) {
         state.bankroll += payout;
+        const net = payout - state.roundStake;
+        recordResult(Math.max(net, 0), Math.max(-net, 0));
         state.active = false;
         state.hidden = false;
         state.message = message;
@@ -185,6 +502,7 @@
         if (state.active || state.bankroll < 10) return;
         state.bet = Math.max(10, Math.min(state.bet, state.bankroll));
         state.bankroll -= state.bet;
+        state.roundStake = state.bet;
         state.player = [draw(), draw()];
         state.dealer = [draw(), draw()];
         state.active = true;
@@ -218,6 +536,7 @@
       function doubleDown() {
         if (!state.active || state.player.length !== 2 || state.bankroll < state.bet) return;
         state.bankroll -= state.bet;
+        state.roundStake += state.bet;
         state.bet *= 2;
         state.player.push(draw());
         if (score(state.player) > 21) finish("Doble y te pasaste. Gana la casa.", "loss", 0);
@@ -230,6 +549,7 @@
           const hidden = hideSecond && index === 1;
           const el = document.createElement("div");
           el.className = `card${hidden ? " hidden" : card.suit === "♥" || card.suit === "♦" ? " red" : ""}`;
+          el.style.animationDelay = `${index * 90}ms`;
           el.setAttribute("aria-label", hidden ? "Carta oculta" : `${card.rank} de ${card.suit}`);
           if (!hidden) {
             el.innerHTML = `<span class="corner top"><span class="rank">${card.rank}</span><span class="suit-small">${card.suit}</span></span><span class="suit-big">${card.suit}</span><span class="corner bottom"><span class="rank">${card.rank}</span><span class="suit-small">${card.suit}</span></span>`;
@@ -255,6 +575,11 @@
         $("hit").disabled = !state.active;
         $("stand").disabled = !state.active;
         $("double").disabled = !state.active || state.player.length !== 2 || state.bankroll < state.bet;
+        $("change-game").disabled = state.active || state.isSpinning;
+        $("change-account").disabled = state.active || state.isSpinning;
+        $("shortcut-hints").textContent = state.mode === "roulette" ? "ENTER  GIRAR" : "H  PEDIR    S  PLANTARSE    ENTER  REPARTIR";
+        $("spin").disabled = state.isSpinning || state.bankroll < state.bet;
+        $("number-label").hidden = $("roulette-type").value !== "number";
         document.querySelectorAll("[data-bet]").forEach((button) => {
           button.disabled = state.active || state.bankroll < 10;
         });
@@ -268,15 +593,36 @@
       $("hit").addEventListener("click", hit);
       $("stand").addEventListener("click", stand);
       $("double").addEventListener("click", doubleDown);
+      $("account-form").addEventListener("submit", loginAccount);
+      $("register-account").addEventListener("click", registerAccount);
+      $("account-form").addEventListener("input", () => setAuthMessage(""));
+      $("change-account").addEventListener("click", () => {
+        if (state.active || state.isSpinning) return;
+        $("app").hidden = true;
+        $("game-picker").hidden = true;
+        $("account-screen").hidden = false;
+        $("account-name").value = "";
+        renderLeaderboards();
+      });
+      document.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => chooseMode(button.dataset.mode)));
+      $("change-game").addEventListener("click", () => {
+        if (state.active || state.isSpinning) return;
+        $("app").hidden = true;
+        $("game-picker").hidden = false;
+      });
+      $("spin").addEventListener("click", spinRoulette);
+      $("roulette-type").addEventListener("change", render);
       document.addEventListener("keydown", (event) => {
-        if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
-        if (event.key === "Enter") { event.preventDefault(); if (!state.active) startRound(); }
+        if (event.repeat || event.altKey || event.ctrlKey || event.metaKey || state.isSpinning || $("account-screen").hidden === false || $("game-picker").hidden === false) return;
+        if (event.key === "Enter") { event.preventDefault(); if (!state.active && !$("app").hidden) state.mode === "roulette" ? spinRoulette() : startRound(); }
         else if (event.key.toLowerCase() === "h") hit();
         else if (event.key.toLowerCase() === "s") stand();
       });
       newShoe();
+      renderRoulettePockets();
       state.message = "¡Listo para jugar!";
       render();
+      renderLeaderboards();
     })();
   </script>
 </body>
