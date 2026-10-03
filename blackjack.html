@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071713">
+  <title>Blackjack 21 — Mesa privada</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #071713;
+      --panel: #10251f;
+      --edge: #25443a;
+      --felt: #086044;
+      --felt-dark: #064832;
+      --gold: #f2c66d;
+      --cream: #fff8e8;
+      --muted: #a8c1b5;
+      --green: #72d6a3;
+      --red: #e36b6b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh; margin: 0; padding: 24px;
+      display: grid; place-items: center;
+      color: var(--cream); background:
+        radial-gradient(ellipse at 50% 38%, #133a2d 0, transparent 60%), var(--bg);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    button { font: inherit; }
+    .app { width: min(1120px, 100%); }
+    .topbar { display: flex; align-items: center; gap: 14px; padding: 0 4px 18px; }
+    .brand-icon { color: var(--gold); font-size: 30px; }
+    .brand h1 { margin: 0; font-size: 17px; letter-spacing: .11em; }
+    .brand small { color: var(--muted); font-size: 10px; letter-spacing: .17em; }
+    .stats { display: flex; gap: 10px; margin-left: auto; }
+    .stat { min-width: 126px; padding: 10px 16px; text-align: center; background: var(--panel); border: 1px solid var(--edge); border-radius: 14px; }
+    .stat span { display: block; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .14em; }
+    .stat strong { display: block; margin-top: 3px; font-size: 19px; }
+    .stat.bet strong { color: var(--gold); }
+    .table {
+      position: relative; min-height: 525px; overflow: hidden; isolation: isolate;
+      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+      padding: 30px 22px 26px; border: 3px solid #7b6539; border-radius: 100px;
+      background: radial-gradient(ellipse at 50% 45%, #0c7454, var(--felt) 65%, var(--felt-dark));
+      box-shadow: inset 0 0 0 8px #07513c, inset 0 0 0 9px #1a7958, 0 24px 80px #0008;
+    }
+    .table::after { content: ""; position: absolute; z-index: -1; width: 76%; height: 95%; left: 12%; top: 21%; border: 1px solid #6eb18a66; border-radius: 50%; }
+    .seat { width: 100%; text-align: center; }
+    .seat-title { margin: 0 0 12px; color: #c4ddcf; font-size: 10px; font-weight: 800; letter-spacing: .19em; }
+    .hand { min-height: 112px; display: flex; justify-content: center; align-items: flex-start; padding: 0 8px; }
+    .card {
+      width: 72px; height: 103px; flex: 0 1 72px; position: relative; margin: 0 5px;
+      display: grid; place-items: center; border: 1px solid #e6ddca; border-radius: 10px;
+      color: #182a25; background: #fffaf0; box-shadow: 0 5px 9px #002a1d88;
+      animation: deal .22s ease-out both;
+    }
+    @keyframes deal { from { opacity: 0; transform: translateY(-12px) scale(.94); } to { opacity: 1; transform: none; } }
+    .card.red { color: #d95555; }
+    .card .corner { position: absolute; display: flex; flex-direction: column; align-items: center; font-weight: 800; line-height: 1.05; }
+    .card .top { top: 7px; left: 8px; }
+    .card .bottom { bottom: 7px; right: 8px; transform: rotate(180deg); }
+    .card .rank { font-size: 14px; }
+    .card .suit-small { font-size: 11px; }
+    .card .suit-big { font-size: 30px; }
+    .card.hidden { color: var(--gold); border-color: var(--gold); background: repeating-linear-gradient(45deg,#254f41 0 7px,#1d4437 7px 14px); }
+    .card.hidden::after { content: "✦"; font-size: 29px; text-shadow: 0 1px #000; }
+    .score { display: inline-flex; min-width: 56px; height: 25px; justify-content: center; align-items: center; margin-top: 3px; border: 1px solid #55a17e; border-radius: 16px; background: #094532; font-size: 11px; font-weight: 800; }
+    .table-mark { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); padding: 9px 17px; border: 1px solid #318362; border-radius: 20px; background: #07523e; color: #d3e5d9; white-space: nowrap; font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+    .status { min-height: 24px; margin: 13px 0; text-align: center; color: var(--muted); font-size: 13px; font-weight: 700; }
+    .status.win { color: var(--green); } .status.loss { color: var(--red); } .status.push { color: var(--gold); }
+    .controls { display: flex; align-items: end; justify-content: space-between; gap: 18px; padding: 5px 4px 0; }
+    .betting { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+    .betting-label { width: 100%; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .14em; }
+    .actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+    .btn { min-height: 43px; padding: 0 16px; border: 1px solid #416153; border-radius: 12px; color: var(--cream); background: #1b3930; font-size: 12px; font-weight: 800; cursor: pointer; transition: transform .12s, background .12s, border-color .12s; }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); border-color: #84ac91; background: #25483b; }
+    .btn:active:not(:disabled) { transform: translateY(0); }
+    .btn.primary { border-color: var(--gold); color: #14231c; background: var(--gold); }
+    .btn.primary:hover:not(:disabled) { background: #ffda8d; }
+    .btn:disabled { color: #60766c; border-color: #26382f; background: #172720; cursor: not-allowed; }
+    .btn.bet-chip { min-height: 36px; padding: 0 11px; font-size: 11px; }
+    footer { display: flex; justify-content: space-between; gap: 10px; margin: 16px 4px 0; color: #77968a; font-size: 9px; font-weight: 700; letter-spacing: .06em; }
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+      .topbar { flex-wrap: wrap; }
+      .stats { width: 100%; margin-left: 0; }
+      .stat { flex: 1; }
+      .table { min-height: 470px; border-radius: 54px; padding: 26px 12px 22px; }
+      .card { width: 58px; height: 86px; flex-basis: 58px; margin: 0 2px; }
+      .card .top { top: 5px; left: 6px; } .card .bottom { bottom: 5px; right: 6px; }
+      .card .rank { font-size: 12px; } .card .suit-small { font-size: 9px; } .card .suit-big { font-size: 24px; }
+      .controls { align-items: stretch; flex-direction: column; }
+      .betting { justify-content: center; }
+      .betting-label { text-align: center; }
+      .actions { justify-content: center; }
+      .btn { flex: 1 1 auto; padding: 0 11px; }
+      footer { font-size: 8px; }
+    }
+    @media (max-width: 390px) { .brand h1 { font-size: 14px; } .stat { min-width: 0; padding: 9px; } .table-mark { font-size: 8px; } }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <span class="brand-icon" aria-hidden="true">♠</span>
+      <div class="brand"><h1>BLACKJACK</h1><small>21&nbsp; / &nbsp;MESA PRIVADA</small></div>
+      <div class="stats" aria-label="Marcador">
+        <div class="stat"><span>SALDO</span><strong id="bankroll">$1,000</strong></div>
+        <div class="stat bet"><span>APUESTA</span><strong id="bet">$100</strong></div>
+      </div>
+    </header>
+
+    <section class="table" aria-label="Mesa de blackjack">
+      <div class="seat dealer-seat">
+        <h2 class="seat-title">DEALER</h2>
+        <div class="hand" id="dealer-hand" aria-label="Mano del dealer"></div>
+        <div class="score" id="dealer-score" hidden></div>
+      </div>
+      <div class="table-mark">✦ &nbsp; PAGA 3:2 EN BLACKJACK &nbsp; ✦</div>
+      <div class="seat player-seat">
+        <h2 class="seat-title">TU MANO</h2>
+        <div class="hand" id="player-hand" aria-label="Tu mano"></div>
+        <div class="score" id="player-score" hidden></div>
+      </div>
+    </section>
+    <div class="status" id="status" role="status" aria-live="polite">¡Listo para jugar!</div>
+
+    <section class="controls" aria-label="Controles del juego">
+      <div class="betting">
+        <span class="betting-label">AJUSTA TU APUESTA</span>
+        <button class="btn bet-chip" data-bet="-10" aria-label="Restar 10">−10</button>
+        <button class="btn bet-chip" data-bet="10" aria-label="Sumar 10">+10</button>
+        <button class="btn bet-chip" data-bet="25">+$25</button>
+        <button class="btn bet-chip" data-bet="50">+$50</button>
+        <button class="btn bet-chip" data-bet="100">+$100</button>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="deal">REPARTIR <small>ENTER</small></button>
+        <button class="btn" id="hit" disabled>PEDIR <small>H</small></button>
+        <button class="btn" id="stand" disabled>PLANTARSE <small>S</small></button>
+        <button class="btn" id="double" disabled>DOBLAR</button>
+      </div>
+    </section>
+    <footer><span id="round">RONDA&nbsp; 00</span><span>H&nbsp; PEDIR &nbsp;&nbsp; S&nbsp; PLANTARSE &nbsp;&nbsp; ENTER&nbsp; REPARTIR</span></footer>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+      const suits = ["♠", "♥", "♦", "♣"];
+      const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+      const state = { bankroll: 1000, bet: 100, player: [], dealer: [], deck: [], active: false, hidden: false, round: 0, resultKind: "neutral" };
+      const $ = (id) => document.getElementById(id);
+      const money = (amount) => `$${amount.toLocaleString("en-US")}`;
+
+      function newShoe() {
+        state.deck = [];
+        for (let pack = 0; pack < 6; pack++) {
+          for (const suit of suits) for (const rank of ranks) state.deck.push({ suit, rank });
+        }
+        for (let i = state.deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [state.deck[i], state.deck[j]] = [state.deck[j], state.deck[i]];
+        }
+      }
+      function draw() { if (!state.deck.length) newShoe(); return state.deck.pop(); }
+      function value(card) { return card.rank === "A" ? 11 : ["J", "Q", "K"].includes(card.rank) ? 10 : Number(card.rank); }
+      function score(cards) {
+        let total = cards.reduce((sum, card) => sum + value(card), 0);
+        let aces = cards.filter((card) => card.rank === "A").length;
+        while (total > 21 && aces > 0) { total -= 10; aces--; }
+        return total;
+      }
+      function blackjack(cards) { return cards.length === 2 && score(cards) === 21; }
+      function finish(message, kind, payout) {
+        state.bankroll += payout;
+        state.active = false;
+        state.hidden = false;
+        state.message = message;
+        state.resultKind = kind;
+        render();
+      }
+      function startRound() {
+        if (state.active || state.bankroll < 10) return;
+        state.bet = Math.max(10, Math.min(state.bet, state.bankroll));
+        state.bankroll -= state.bet;
+        state.player = [draw(), draw()];
+        state.dealer = [draw(), draw()];
+        state.active = true;
+        state.hidden = true;
+        state.round++;
+        state.message = "Tu turno: pide carta o planta.";
+        state.resultKind = "neutral";
+        if (blackjack(state.player) || blackjack(state.dealer)) {
+          state.hidden = false;
+          const playerBJ = blackjack(state.player), dealerBJ = blackjack(state.dealer);
+          if (playerBJ && dealerBJ) finish("Blackjack de ambos: empate.", "push", state.bet);
+          else if (playerBJ) finish("¡Blackjack! Pago 3:2.", "win", state.bet + Math.floor(state.bet * 1.5));
+          else finish("La casa tiene blackjack.", "loss", 0);
+        } else render();
+      }
+      function hit() {
+        if (!state.active) return;
+        state.player.push(draw());
+        if (score(state.player) > 21) finish("Te pasaste. Gana la casa.", "loss", 0);
+        else render();
+      }
+      function stand() {
+        if (!state.active) return;
+        state.hidden = false;
+        while (score(state.dealer) < 17) state.dealer.push(draw());
+        const player = score(state.player), dealer = score(state.dealer);
+        if (dealer > 21 || player > dealer) finish("¡Ganaste la mano!", "win", state.bet * 2);
+        else if (player === dealer) finish("Empate. Se devuelve tu apuesta.", "push", state.bet);
+        else finish("La casa gana esta vez.", "loss", 0);
+      }
+      function doubleDown() {
+        if (!state.active || state.player.length !== 2 || state.bankroll < state.bet) return;
+        state.bankroll -= state.bet;
+        state.bet *= 2;
+        state.player.push(draw());
+        if (score(state.player) > 21) finish("Doble y te pasaste. Gana la casa.", "loss", 0);
+        else stand();
+      }
+      function renderHand(target, cards, hideSecond = false) {
+        const hand = $(target);
+        hand.replaceChildren();
+        cards.forEach((card, index) => {
+          const hidden = hideSecond && index === 1;
+          const el = document.createElement("div");
+          el.className = `card${hidden ? " hidden" : card.suit === "♥" || card.suit === "♦" ? " red" : ""}`;
+          el.setAttribute("aria-label", hidden ? "Carta oculta" : `${card.rank} de ${card.suit}`);
+          if (!hidden) {
+            el.innerHTML = `<span class="corner top"><span class="rank">${card.rank}</span><span class="suit-small">${card.suit}</span></span><span class="suit-big">${card.suit}</span><span class="corner bottom"><span class="rank">${card.rank}</span><span class="suit-small">${card.suit}</span></span>`;
+          }
+          hand.append(el);
+        });
+      }
+      function render() {
+        $("bankroll").textContent = money(state.bankroll);
+        $("bet").textContent = money(state.bet);
+        $("round").innerHTML = `RONDA&nbsp; ${String(state.round).padStart(2, "0")}`;
+        renderHand("player-hand", state.player);
+        renderHand("dealer-hand", state.dealer, state.hidden);
+        const playerScore = $("player-score"), dealerScore = $("dealer-score");
+        playerScore.hidden = !state.player.length;
+        dealerScore.hidden = !state.dealer.length;
+        if (state.player.length) playerScore.textContent = score(state.player);
+        if (state.dealer.length) dealerScore.textContent = state.hidden ? "?" : score(state.dealer);
+        const status = $("status");
+        status.textContent = state.message || "¡Listo para jugar!";
+        status.className = `status ${state.resultKind}`;
+        $("deal").disabled = state.active || state.bankroll < 10;
+        $("hit").disabled = !state.active;
+        $("stand").disabled = !state.active;
+        $("double").disabled = !state.active || state.player.length !== 2 || state.bankroll < state.bet;
+        document.querySelectorAll("[data-bet]").forEach((button) => {
+          button.disabled = state.active || state.bankroll < 10;
+        });
+      }
+      document.querySelectorAll("[data-bet]").forEach((button) => button.addEventListener("click", () => {
+        if (state.active) return;
+        state.bet = Math.max(10, Math.min(state.bet + Number(button.dataset.bet), state.bankroll));
+        render();
+      }));
+      $("deal").addEventListener("click", startRound);
+      $("hit").addEventListener("click", hit);
+      $("stand").addEventListener("click", stand);
+      $("double").addEventListener("click", doubleDown);
+      document.addEventListener("keydown", (event) => {
+        if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.key === "Enter") { event.preventDefault(); if (!state.active) startRound(); }
+        else if (event.key.toLowerCase() === "h") hit();
+        else if (event.key.toLowerCase() === "s") stand();
+      });
+      newShoe();
+      state.message = "¡Listo para jugar!";
+      render();
+    })();
+  </script>
+</body>
+</html>
